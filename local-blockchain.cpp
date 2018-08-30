@@ -1,3 +1,13 @@
+/*
+ *  compile: g++ local-blockchain.cpp -lcrypto
+ *
+ *  Current issues:
+ *      - blocks are in sequential order, can access last block by just using the latest index i
+ *          + this can be avoided if blockchain is branced.
+ *          + need to input prev block hash in transaction input to make that possible.
+ *  
+ */
+
 #include <bits/stdc++.h>
 #include <openssl/sha.h>
 #include <iomanip>
@@ -14,36 +24,9 @@ typedef struct block_structure {
 
 } block;
 
-
-// string sha256(const string str)
-// {
-//     unsigned char hash[SHA256_DIGEST_LENGTH];
-//     SHA256_CTX sha256;
-//     SHA256_Init(&sha256);
-//     SHA256_Update(&sha256, str.c_str(), str.size());
-//     SHA256_Final(hash, &sha256);
-//     stringstream ss;
-//     for(int i = 0; i < SHA256_DIGEST_LENGTH; i++)
-//     {
-//         ss << hex << setw(2) << setfill('0') << (int)hash[i];
-//     }
-//     return ss.str();
-// }       
-
-// int main() {
-
-//     // string s1 = sha256("123");
-//     cout << s1 << endl; 
-
-//     cout << sha256("1234567890_1") << endl;
-//     cout << sha256("1234567890_2") << endl;
-//     cout << sha256("1234567890_3") << endl;
-//     cout << sha256("1234567890_4") << endl;
-//     return 0;
-// }
-
 void sha256(char *str, char* outputBuffer);
 void add_block( block* B, char* last_hash, unordered_map<char*, int> order, int i, char* keyin);
+
 
 int main()
 {
@@ -51,15 +34,17 @@ int main()
 
     block* B = (block*)calloc(NUM_BLOCKS,sizeof(block));
 
-    // input mechanism for new transactions. (what is a transaction?)
-    // bitcoin's block no. 0 has prev. hash field 0000000..000
-
     char* last_hash = (char*)malloc(HASH_LEN*sizeof(char));
 
     for (int i = 0; i < HASH_LEN-1; i++)
         last_hash[i] = '0';    //  hash value for B[0].back 
 
     last_hash[HASH_LEN-1] = 0;
+
+    cout << "Usage:" << endl;
+    // cout << "./a.out" << endl;
+    cout << "<number of transactions>" << endl;
+    cout << "number of transactions times: <size of key> key" << endl; 
 
     int num_tran;
     cin >> num_tran;
@@ -77,10 +62,11 @@ int main()
 
         puts(B[i].back);
         puts(last_hash);
-
     }
 
-    // for (int i = 0; i < )
+    cout << "backward traversal of blockchain:" << endl;
+    cout << endl;
+
 
     return 0;
 }
@@ -118,16 +104,3 @@ void sha256(char *str, char* outputBuffer)
     }
     outputBuffer[64] = 0;
 }
-
-// int main()
-// {
-//     char* buffer = (char*)malloc(HASH_LEN*sizeof(char));
-
-//     sha256("string1", buffer);
-//     cout << buffer << endl;
-//     sha256("string2", buffer);
-//     cout << buffer << endl;
-
-//     cout << strlen(buffer)<< endl;
-    
-// }
