@@ -5,11 +5,6 @@
 #define NUM_BLOCKS 100
 #define HASH_LEN 65
 
-// unordered map for storing hash, index pair.
-// data-structure to store blocks - array.
-
-//  define block data structure
-
 using namespace std;
 
 typedef struct block_structure {
@@ -48,11 +43,12 @@ typedef struct block_structure {
 // }
 
 void sha256(char *str, char* outputBuffer);
+void add_block( block* B, char* last_hash, unordered_map order, int i, char* keyin);
+
 
 int main()
 {
-    unordered_map <char[], int> order;
-
+    unordered_map <char*, int> order;
 
     block* B = (block*)calloc(NUM_BLOCKS,sizeof(block));
 
@@ -62,20 +58,50 @@ int main()
     char* last_hash = (char*)malloc(HASH_LEN*sizeof(char));
 
     for (int i = 0; i < HASH_LEN; i++)
-        last_hash = '0';
+        last_hash = '0';    //  hash value for B[0].back 
 
-    
-    // loop this no. of blocks times.
-    add_block(B, last_hash, order, i, reqd_string); // i is the loop variable (represents order[new_hash] = i)
+    int num_tran;
+    cin >> num_tran;
+
+    int size_tran;
+    char* tran;
+
+    for (int i = 0; i < num_transactions; i++)
+    {
+        cin >> size_tran;
+        tran = (char*)malloc(size_tran*sizeof(char));
+        cin >> tran;
+
+        add_block(B, last_hash, order, i, tran); // i is the loop variable (represents order[new_hash] = i)
+        puts(B[i].back);
+        cout << endl;
+        puts(last_hash);
+        cout << endl;
+
+    }
+
+    // for (int i = 0; i < )
 
     return 0;
 }
 
-void add_block( block* B, char* last_hash, unordered_map order, int i, char* key)
+void add_block( block* B, char* last_hash, unordered_map order, int i, char* keyin)
 {
-    B[i].back = (char*)malloc(HASH_LEN*sizeof(char));
-    strcpy(B[i].back, last_hash);   
+    int s = strlen(keyin);
+    B[i].key = (char*) malloc((s+1)*sizeof(char));  // s+1 to include null termination of string.
 
+    strcpy(B[i].back, last_hash);
+    strcpy(B[i].key, keyin);
+
+    char* strForHash = (char*) malloc((s+HASH_LEN)*sizeof(char));
+
+    strcpy(strForHash, B[i].back);  //
+    strcat(strForHash, B[i].key);   //  Generate unique string for hash computation.
+
+    sha256(strForHash,last_hash);   // stores latest hash-value in last_hash field.
+
+    // add last_hash and i to order.
+    order[last_hash] = i;
 }
 
 void sha256(char *str, char* outputBuffer)
