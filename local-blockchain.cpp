@@ -20,6 +20,7 @@
 
 using namespace std;
 
+typedef unordered_map<string, int> u_map;
 typedef struct block_structure {
     
     char back[HASH_LEN];
@@ -29,9 +30,9 @@ typedef struct block_structure {
 } block;
 
 void sha256(char *str, char* outputBuffer);
-void add_block( block* B, char* last_hash, unordered_map<char*, int> &umap, int i, char* keyin);
+void add_block( block* B, char* last_hash, u_map &umap, int i, char* keyin);
 
-void printumap(unordered_map<char*, int> &umap)
+void printumap(u_map &umap)
 {
     cout << "printumap" << endl;
 
@@ -45,7 +46,7 @@ void printumap(unordered_map<char*, int> &umap)
 
 int main()
 {
-    unordered_map<char*, int> umap;
+    u_map umap;
 
     block* B = (block*)calloc(NUM_BLOCKS,sizeof(block));
 
@@ -59,7 +60,6 @@ int main()
     umap[last_hash] = -1;
 
     cout << "Usage:" << endl;
-    // cout << "./a.out" << endl;
     cout << "<number of transactions>" << endl;
     cout << "number of transactions times: <size of key> key" << endl; 
 
@@ -79,28 +79,30 @@ int main()
 
         puts(B[i].back);
         puts(last_hash);
+        cout << endl;
         free(tran);
     }
 
+    cout << endl;
     cout << "backward traversal of blockchain:" << endl;
     cout << endl;
 
-    printumap(umap);
+    // printumap(umap);
 
     int ind = umap.find(last_hash)->second;
 
-    cout << "ind initial value" << ind <<  endl;
+    // cout << "ind initial value" << ind <<  endl;
 
     while (ind != -1)
     {
         cout << ind << endl;
-        ind = umap.find(B[ind].back)->second;
+        ind = (umap.find(B[ind].back))->second;
     }
 
     return 0;
 }
 
-void add_block( block* B, char* last_hash, unordered_map<char*, int> &umap, int i, char* keyin)
+void add_block( block* B, char* last_hash, u_map &umap, int i, char* keyin)
 {
     int s = strlen(keyin);
     B[i].key = (char*) malloc((s+1)*sizeof(char));  // s+1 to include null termination of string.
@@ -117,8 +119,15 @@ void add_block( block* B, char* last_hash, unordered_map<char*, int> &umap, int 
     free(strForHash);
 
     strcpy(B[i].myhash, last_hash);
+
+    // printumap(umap);
+
+    // cout << umap.begin()->first << endl;
+
     umap[last_hash] = i;
-    printumap(umap);
+
+    // cout << umap.begin()->first << endl;
+    // printumap(umap);
 }
 
 void sha256(char *str, char* outputBuffer)
