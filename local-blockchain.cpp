@@ -8,7 +8,7 @@
  *  To-do:
  *      - input transactions from file
  *      - change block_structure (add list of transactions)
- *      - changing char* to string type
+ *      - changing char* to string type everywhere
  */     
 
 #include <bits/stdc++.h>
@@ -87,11 +87,7 @@ int main()
     cout << "backward traversal of blockchain:" << endl;
     cout << endl;
 
-    // printumap(umap);
-
     int ind = umap.find(last_hash)->second;
-
-    // cout << "ind initial value" << ind <<  endl;
 
     while (ind != -1)
     {
@@ -119,15 +115,7 @@ void add_block( block* B, char* last_hash, u_map &umap, int i, char* keyin)
     free(strForHash);
 
     strcpy(B[i].myhash, last_hash);
-
-    // printumap(umap);
-
-    // cout << umap.begin()->first << endl;
-
     umap[last_hash] = i;
-
-    // cout << umap.begin()->first << endl;
-    // printumap(umap);
 }
 
 void sha256(char *str, char* outputBuffer)
