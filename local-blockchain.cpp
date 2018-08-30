@@ -43,12 +43,11 @@ typedef struct block_structure {
 // }
 
 void sha256(char *str, char* outputBuffer);
-void add_block( block* B, char* last_hash, unordered_map order, int i, char* keyin);
-
+void add_block( block* B, char* last_hash, unordered_map<char*, int> order, int i, char* keyin);
 
 int main()
 {
-    unordered_map <char*, int> order;
+    unordered_map<char*, int> order;
 
     block* B = (block*)calloc(NUM_BLOCKS,sizeof(block));
 
@@ -57,8 +56,10 @@ int main()
 
     char* last_hash = (char*)malloc(HASH_LEN*sizeof(char));
 
-    for (int i = 0; i < HASH_LEN; i++)
-        last_hash = '0';    //  hash value for B[0].back 
+    for (int i = 0; i < HASH_LEN-1; i++)
+        last_hash[i] = '0';    //  hash value for B[0].back 
+
+    last_hash[HASH_LEN-1] = 0;
 
     int num_tran;
     cin >> num_tran;
@@ -66,17 +67,16 @@ int main()
     int size_tran;
     char* tran;
 
-    for (int i = 0; i < num_transactions; i++)
+    for (int i = 0; i < num_tran; i++)
     {
         cin >> size_tran;
-        tran = (char*)malloc(size_tran*sizeof(char));
+        tran = (char*)malloc((size_tran+1)*sizeof(char));
         cin >> tran;
 
         add_block(B, last_hash, order, i, tran); // i is the loop variable (represents order[new_hash] = i)
+
         puts(B[i].back);
-        cout << endl;
         puts(last_hash);
-        cout << endl;
 
     }
 
@@ -85,7 +85,7 @@ int main()
     return 0;
 }
 
-void add_block( block* B, char* last_hash, unordered_map order, int i, char* keyin)
+void add_block( block* B, char* last_hash, unordered_map<char*, int> order, int i, char* keyin)
 {
     int s = strlen(keyin);
     B[i].key = (char*) malloc((s+1)*sizeof(char));  // s+1 to include null termination of string.
