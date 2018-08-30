@@ -5,8 +5,11 @@
  *      - blocks are in sequential order, can access last block by just using the latest index i
  *          + this can be avoided if blockchain is branced.
  *          + need to input prev block hash in transaction input to make that possible.
- *  
- */
+ *  To-do:
+ *      - input transactions from file
+ *      - change block_structure (add list of transactions)
+ *      - changing char* to string type
+ */     
 
 #include <bits/stdc++.h>
 #include <openssl/sha.h>
@@ -21,12 +24,24 @@ typedef struct block_structure {
     
     char back[HASH_LEN];
     char* key;
+    char myhash[HASH_LEN];
 
 } block;
 
 void sha256(char *str, char* outputBuffer);
 void add_block( block* B, char* last_hash, unordered_map<char*, int> &umap, int i, char* keyin);
 
+void printumap(unordered_map<char*, int> &umap)
+{
+    cout << "printumap" << endl;
+
+    for (auto i = umap.begin(); i != umap.end(); i++)
+    {
+        cout << i->second << " ";
+    }
+
+    cout << endl;
+}
 
 int main()
 {
@@ -70,6 +85,8 @@ int main()
     cout << "backward traversal of blockchain:" << endl;
     cout << endl;
 
+    printumap(umap);
+
     int ind = umap.find(last_hash)->second;
 
     cout << "ind initial value" << ind <<  endl;
@@ -95,12 +112,13 @@ void add_block( block* B, char* last_hash, unordered_map<char*, int> &umap, int 
 
     strcpy(strForHash, B[i].back);  //
     strcat(strForHash, B[i].key);   //  Generate unique string for hash computation.
-
+    
     sha256(strForHash,last_hash);   // stores latest hash-value in last_hash field.
-
     free(strForHash);
-    // add last_hash and i to umap.
+
+    strcpy(B[i].myhash, last_hash);
     umap[last_hash] = i;
+    printumap(umap);
 }
 
 void sha256(char *str, char* outputBuffer)
@@ -110,10 +128,13 @@ void sha256(char *str, char* outputBuffer)
     SHA256_Init(&sha256);
     SHA256_Update(&sha256, str, strlen(str));
     SHA256_Final(hash, &sha256);
+
     int i = 0;
+    
     for(i = 0; i < SHA256_DIGEST_LENGTH; i++)
     {
         sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
     }
+
     outputBuffer[64] = 0;
 }
