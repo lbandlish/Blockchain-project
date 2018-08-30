@@ -25,12 +25,12 @@ typedef struct block_structure {
 } block;
 
 void sha256(char *str, char* outputBuffer);
-void add_block( block* B, char* last_hash, unordered_map<char*, int> order, int i, char* keyin);
+void add_block( block* B, char* last_hash, unordered_map<char*, int> &umap, int i, char* keyin);
 
 
 int main()
 {
-    unordered_map<char*, int> order;
+    unordered_map<char*, int> umap;
 
     block* B = (block*)calloc(NUM_BLOCKS,sizeof(block));
 
@@ -40,6 +40,8 @@ int main()
         last_hash[i] = '0';    //  hash value for B[0].back 
 
     last_hash[HASH_LEN-1] = 0;
+
+    umap[last_hash] = -1;
 
     cout << "Usage:" << endl;
     // cout << "./a.out" << endl;
@@ -58,20 +60,30 @@ int main()
         tran = (char*)malloc((size_tran+1)*sizeof(char));
         cin >> tran;
 
-        add_block(B, last_hash, order, i, tran); // i is the loop variable (represents order[new_hash] = i)
+        add_block(B, last_hash, umap, i, tran); // i is the loop variable (represents umap[new_hash] = i)
 
         puts(B[i].back);
         puts(last_hash);
+        free(tran);
     }
 
     cout << "backward traversal of blockchain:" << endl;
     cout << endl;
 
+    int ind = umap.find(last_hash)->second;
+
+    cout << "ind initial value" << ind <<  endl;
+
+    while (ind != -1)
+    {
+        cout << ind << endl;
+        ind = umap.find(B[ind].back)->second;
+    }
 
     return 0;
 }
 
-void add_block( block* B, char* last_hash, unordered_map<char*, int> order, int i, char* keyin)
+void add_block( block* B, char* last_hash, unordered_map<char*, int> &umap, int i, char* keyin)
 {
     int s = strlen(keyin);
     B[i].key = (char*) malloc((s+1)*sizeof(char));  // s+1 to include null termination of string.
@@ -86,8 +98,9 @@ void add_block( block* B, char* last_hash, unordered_map<char*, int> order, int 
 
     sha256(strForHash,last_hash);   // stores latest hash-value in last_hash field.
 
-    // add last_hash and i to order.
-    order[last_hash] = i;
+    free(strForHash);
+    // add last_hash and i to umap.
+    umap[last_hash] = i;
 }
 
 void sha256(char *str, char* outputBuffer)
