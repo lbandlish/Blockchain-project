@@ -71,6 +71,21 @@ int main()
 
     for (int i = 0; i < num_tran; i++)
     {
+
+        // fp = fopen("transactions.txt", "r");
+        // if (fp==NULL) {fputs ("File error",stderr); exit (1);}
+
+        // fseek (fp , 0 , SEEK_END);
+        // lSize = ftell (fp);
+        // rewind (fp);
+
+        // buffer = (char*) malloc (sizeof(char)*lSize);
+        // if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+        // result = fread (buffer,1,lSize,fp);
+        // if (result != lSize) {fputs ("Reading error",stderr); exit (3);}
+
+
         cin >> size_tran;
         tran = (char*)malloc((size_tran+1)*sizeof(char));
         cin >> tran;
