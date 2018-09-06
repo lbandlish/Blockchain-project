@@ -27,7 +27,7 @@ typedef struct transaction_structure {
     int add_remove ; // 0 for adding and 1 for removing
     string key;
     string value;
-}
+} transaction;
 
 typedef struct block_structure {
     
