@@ -21,10 +21,18 @@
 using namespace std;
 
 typedef unordered_map<string, int> u_map;
+
+typedef struct transaction_structure {
+
+    int add_remove ; // 0 for adding and 1 for removing
+    string key;
+    string value;
+}
+
 typedef struct block_structure {
     
     char back[HASH_LEN];
-    char* key;
+    vector<transaction> tr_list;
     char myhash[HASH_LEN];
 
 } block;
