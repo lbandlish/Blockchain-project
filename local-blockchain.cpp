@@ -63,29 +63,30 @@ int main()
 
     umap[last_hash] = -1;
 
-    cout << "Usage:" << endl;
-    cout << "<number of transactions>" << endl;
-    cout << "number of transactions times: <size of key> key" << endl; 
-
-
 /***************** input from file ******************************/
 
-    FILE* fp = fopen("transactions.txt", "r");
+    FILE* fp = fopen("transactions.txt", "rb");
     if (fp==NULL) {fputs ("File error",stderr); exit (1);}
 
     fseek (fp , 0 , SEEK_END);
     int lSize = ftell (fp);
     rewind (fp);
 
-    char* buffer = (char*) malloc (sizeof(char)*lSize);
+    cout << "lsize: " << lSize << endl;
+
+    char* buffer = (char*) malloc (sizeof(char)*(lSize+1));
     if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
 
     int result = fread (buffer,1,lSize,fp);
     if (result != lSize) {fputs ("Reading error",stderr); exit (3);}
 
+    // cout << buffer << endl;
+
+    // char buffer[] = "3\n\n0\nkey1\nvalue1\n\n1\nkey2\nvalue2\n\n0\nkey3\nvalue3";
+
     stringstream ss(buffer);
 
-    cout << "read file" << endl;
+    cout << "file read over" << endl;
 
 /***************** input over ***********************************/
 
@@ -95,37 +96,34 @@ int main()
     int num_trans;
     ss >> num_trans;
 
-    cout << num_trans << "is the number of transzctions" << endl;
+    cout << num_trans << "is the number of transactions" << endl;
 
     int num_blocks = (num_trans + TRAN_PER_BLOCK - 1) / TRAN_PER_BLOCK;
     // this is just num_trans/TRANS_PER_BLOCK ceiling formula.
     cout << num_blocks << "is the number of blocks" << endl;
 
-
     for (int i = 0; i < num_blocks; i++)
     {
-        for (int j = 0; j < TRAN_PER_BLOCK; j++)
+        for (int j = 0; (j < TRAN_PER_BLOCK) && (i*num_blocks + j < num_trans); j++)
         {
-            cout << "trans[" << j << "] read" << endl;
+            // cout << "trans[" << j << "] before adding to input_tran" << endl;
             ss >> input_tran.add_remove;
             ss >> input_tran.key;
             ss >> input_tran.value;
-            cout << "trans[" << j << "] almost read";
+            // cout << "trans[" << j << "] after adding to input_tran" << endl;
 
             tran.push_back(input_tran);
-            cout << "trans[" << j << "] added";
+            // cout << "trans[" << j << "] pushed to tran vector." << endl;
 
             cout << "input_tran values: " << input_tran.add_remove << " " << input_tran.key << " " << input_tran.value << endl;
-
         }
 
-        for (int j = 0; j < 3; j++)
+        for (int j = 0; (j < TRAN_PER_BLOCK) && (i*num_blocks + j < num_trans) ; j++)
         {
             cout << "intermediate: " << tran[j].value << endl;
-
         }
 
-        cout << "block " << i << " read" << endl;
+        cout << "block " << i << " transactions read into tran vector" << endl;
         cout << "input_tran values: " << input_tran.add_remove << " " << input_tran.key << " " << input_tran.value << endl;
         
         add_block(B, last_hash, umap, i, tran); // i is the loop variable (represents umap[new_hash] = i)
@@ -134,6 +132,10 @@ int main()
         cout << "block " << i << " added" << endl;
         cout << "input_tran values: " << input_tran.add_remove << " " << input_tran.key << " " << input_tran.value << endl;
 
+        for (int j = 0; (j < TRAN_PER_BLOCK) && (i*num_blocks + j < num_trans) ; j++)
+        {
+            tran.pop_back();
+        }
         // puts(B[i].back);
         // puts(last_hash);
         // cout << endl;
@@ -164,33 +166,51 @@ void add_block( block* B, string &last_hash, u_map &umap, int i, vector<transact
 
     // strcpy(B[i].back, last_hash);
     // strcpy(B[i].key, keyin);
-    cout << "before b[" << i << "].back" << endl;
+    // cout << "before b[" << i << "].back" << endl;
     
     string xyz = "asdfs";
     B[i].back = xyz;
 
     // B[i].back = last_hash;
-    cout << "after b[" << i << "].back" << endl;
+    // cout << "after b[" << i << "].back" << endl;
     B[i].tr_seq = tran;
-    cout << "tran" << endl;
+
+    cout << endl;
+
+
+    // cout << "tran" << endl;
     // cout << 
     // char* strForHash = (char*) malloc((s+HASH_LEN)*sizeof(char));
 
     string strForHash = B[i].back;     //
-    cout << "tran2" << endl;
+    // cout << "tran2" << endl;
 
     strForHash += B[i].tr_seq[0].value;   //  Generate unique string for hash computation.
-    cout << "tran3" << endl;
+    // cout << "tran3" << endl;
     
-    sha256(strForHash,last_hash);   // stores latest hash-value in last_hash field.
+    // sha256(strForHash,last_hash);   // stores latest hash-value in last_hash field.
     // free(strForHash);
-    cout << "tran4" << endl;
+    // cout << "tran4" << endl;
 
     // B[i].myhash = last_hash;
     B[i].myhash = "asdfs";
 
-    umap[last_hash] = i;
-    cout << "tran5" << endl;
+    // umap[last_hash] = i;
+    cout << last_hash;
+
+
+    // cout << "tran5" << endl;
+    
+    cout << "{ " << B[i].tr_seq[0].value << endl;
+    cout << B[i].tr_seq[1].value << endl;
+    cout << B[i].tr_seq[2].value << " }" << endl;
+
+    cout << "{ " << B[i].tr_seq[0].key << endl;
+    cout << B[i].tr_seq[1].key << endl;
+    cout << B[i].tr_seq[2].key << " }" << endl;
+
+    cout << B[i].back << endl;
+    cout << B[i].myhash << endl;
 
 
 }
