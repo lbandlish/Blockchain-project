@@ -1,14 +1,15 @@
 - use shared pointers instead of pointers everywhere. (replace malloc with these.)
 - use merkel hash tree function to store a block's hash. (kind of a reverse binary tree hash, with the level of the current nodes also used to calculate the hash value.)
 - write a verify function that can be used to check if the hash stored in a block is the right value.
-- transaction structure:
+(done) transaction structure:
     + add/remove (add/remove specifies whether a key/value pair was added/removed from the overall structure. The blockchain doesn't have to worry about this. It just needs to store transactions)
     + key (string)
     + value (string)
-- read transactions from file.
+(done) read transactions from file.
 - use strings instead of pointers and arrays.
-- block structure:
+(done) block structure:
     + last hash
     + vector<transaction>
     + curr hash
 - develop a client server model for the program, look at how zeromq and other things can be used here.
+- fix the valgrind error causing problem. (stringstream(buffer) causing Conditional jump or move depends on uninitialised value(s) in some internal (traceback) function)

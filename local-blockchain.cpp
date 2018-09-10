@@ -24,10 +24,8 @@ typedef struct transaction_structure {
 
 typedef struct block_structure {
     
-    // char back[HASH_LEN];
     string back;
     vector<transaction> tr_seq;
-    // char myhash[HASH_LEN];
     string myhash;
 
 } block;
@@ -53,22 +51,13 @@ int main()
 
     block* B = (block*)calloc(NUM_BLOCKS,sizeof(block));
 
-    // char* last_hash = (char*)malloc(HASH_LEN*sizeof(char));
     string last_hash;
-
     last_hash.resize(HASH_LEN - 1);
 
     for (int i = 0; i < HASH_LEN-1; i++)
     {
-        // cout << "r";
         last_hash[i] = '0';    //  hash value for B[0].back 
     }
-
-    // last_hash[HASH_LEN-1] = 0;
-
-    // cout << "last hash incoming : " << endl;
-    //     cout << endl;
-    //     cout << last_hash[1] << endl;
 
     umap[last_hash] = -1;
 
