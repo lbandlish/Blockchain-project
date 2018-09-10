@@ -56,10 +56,19 @@ int main()
     // char* last_hash = (char*)malloc(HASH_LEN*sizeof(char));
     string last_hash;
 
-    for (int i = 0; i < HASH_LEN-1; i++)
-        last_hash[i] = '0';    //  hash value for B[0].back 
+    last_hash.resize(HASH_LEN - 1);
 
-    last_hash[HASH_LEN-1] = 0;
+    for (int i = 0; i < HASH_LEN-1; i++)
+    {
+        // cout << "r";
+        last_hash[i] = '0';    //  hash value for B[0].back 
+    }
+
+    // last_hash[HASH_LEN-1] = 0;
+
+    // cout << "last hash incoming : " << endl;
+    //     cout << endl;
+    //     cout << last_hash[1] << endl;
 
     umap[last_hash] = -1;
 
@@ -125,7 +134,9 @@ int main()
 
         cout << "block " << i << " transactions read into tran vector" << endl;
         cout << "input_tran values: " << input_tran.add_remove << " " << input_tran.key << " " << input_tran.value << endl;
-        
+        // cout << "last hash incoming : " << endl;
+        // cout << endl;
+        // cout << last_hash << endl;
         add_block(B, last_hash, umap, i, tran); // i is the loop variable (represents umap[new_hash] = i)
         cout << "add_complete" << endl;
 
@@ -167,15 +178,18 @@ void add_block( block* B, string &last_hash, u_map &umap, int i, vector<transact
     // strcpy(B[i].back, last_hash);
     // strcpy(B[i].key, keyin);
     // cout << "before b[" << i << "].back" << endl;
-    
-    string xyz = "asdfs";
-    B[i].back = xyz;
+    // cout << "last hash incoming : " << endl;
+    // cout << last_hash << endl;
+    // string xyz = "sdfa";
+    // // strcpy(xyz, last_hash);
+    // xyz = last_hash;
+    B[i].back = last_hash;
 
     // B[i].back = last_hash;
     // cout << "after b[" << i << "].back" << endl;
     B[i].tr_seq = tran;
 
-    cout << endl;
+    // cout << endl;
 
 
     // cout << "tran" << endl;
@@ -188,15 +202,15 @@ void add_block( block* B, string &last_hash, u_map &umap, int i, vector<transact
     strForHash += B[i].tr_seq[0].value;   //  Generate unique string for hash computation.
     // cout << "tran3" << endl;
     
-    // sha256(strForHash,last_hash);   // stores latest hash-value in last_hash field.
+    sha256(strForHash,last_hash);   // stores latest hash-value in last_hash field.
     // free(strForHash);
     // cout << "tran4" << endl;
 
-    // B[i].myhash = last_hash;
-    B[i].myhash = "asdfs";
+    B[i].myhash = last_hash;
+    // B[i].myhash = "asdfs";
 
-    // umap[last_hash] = i;
-    cout << last_hash;
+    umap[last_hash] = i;
+    // cout << last_hash;
 
 
     // cout << "tran5" << endl;
@@ -220,16 +234,24 @@ void sha256(string str, string &outputBuffer)
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
-    SHA256_Update(&sha256, (char*)&str, strlen((char*)&str));
+    // SHA256_Update(&sha256, (char*)&str, str.length());
+        SHA256_Update(&sha256, str.c_str(), str.length());
     SHA256_Final(hash, &sha256);
+
+    char copywali[64];
 
     int i = 0;
     
     for(i = 0; i < SHA256_DIGEST_LENGTH; i++)
     {
         // sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
-        sprintf((char*)&outputBuffer[i*2], "%02x", hash[i]);
+        // sprintf((char*)&outputBuffer[i*2], "%02x", hash[i]);
+        sprintf(copywali + (i*2), "%02x", hash[i]);
     }
+    copywali[64] = 0;
 
-    outputBuffer[64] = 0;
+    cout << copywali << endl;
+    outputBuffer = copywali;
+    cout << outputBuffer << endl;
+    // outputBuffer[64] = 0;
 }
