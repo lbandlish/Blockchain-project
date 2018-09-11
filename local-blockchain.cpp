@@ -185,12 +185,14 @@ void add_block( block* B, string &last_hash, u_map &umap, int i, vector<transact
     // cout << 
     // char* strForHash = (char*) malloc((s+HASH_LEN)*sizeof(char));
 
-    string strForHash = B[i].back;     //
+        string strForHash = B[i].back;     //
     // cout << "tran2" << endl;
 
-    strForHash += B[i].tr_seq[0].value;   //  Generate unique string for hash computation.
+        strForHash += B[i].tr_seq[0].value;   //  Generate unique string for hash computation.
     // cout << "tran3" << endl;
     
+    // merkel_hash(B.tr_seq, last_hash);
+
     sha256(strForHash,last_hash);   // stores latest hash-value in last_hash field.
     // free(strForHash);
     // cout << "tran4" << endl;
@@ -215,8 +217,51 @@ void add_block( block* B, string &last_hash, u_map &umap, int i, vector<transact
     cout << B[i].back << endl;
     cout << B[i].myhash << endl;
 
-
 }
+
+// void merkel_hash (vector< transaction > tran, string &last_hash)
+// {
+//     for (auto i = tran.begin(); i != tran.end(); i++)
+//     {
+//         *i = "0" + *i;
+//         sha256(*i, *i);
+//     }
+
+//     find_merkel_root (last_hash, tran, tran.size(), 1);
+// }
+
+// void find_merkel_root (string &last_hash, vector < transaction > &tran, int size, int level)
+// {
+//     if (size == 2)
+//     {
+//         tran[0] = to_string(level) + tran[0];
+//         tran[1] = to_string(level) + tran[1];
+//         tran[0] = tran[0] + tran[1];
+
+//         sha256(tran[0], last_hash);
+//         return;
+//     }
+
+//     if (size % 2 != 0)
+//     {
+//         tran.push_back(*tran.top());
+//         size++;
+//     }
+
+//     for (int i = 0; i < size; i++)
+//     {
+//         tran[i] = to_string(level) + tran[i];
+//     }
+
+//     for (int i = 0; i < size/2; i++)
+//     {
+//         tran[i] = tran[2i] + tran[2i+1];
+
+//         sha256(tran[i], tran[i]);
+//     }
+
+//     find_merkel_root(last_hash, tran, size/2, level+1);
+// }
 
 void sha256(string str, string &outputBuffer)
 {
